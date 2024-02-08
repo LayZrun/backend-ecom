@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Images from JSON</title>
+</head>
+<body>
+
+<div id="products-container"></div>
+
+<script>
+    const productsContainer = document.getElementById('products-container');
+
+    // Fetch JSON data from your API endpoint
+    fetch('http://127.0.0.1:8000/product/show/json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the data and render images
+            if (data.data.length > 0) {
+                data.data.forEach(product => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = 'data:image/png;base64,' + product.imagebase64;
+                    imgElement.alt = product.title;
+                    productsContainer.appendChild(imgElement);
+                });
+            } else {
+                const messageElement = document.createElement('p');
+                messageElement.textContent = data.message;
+                productsContainer.appendChild(messageElement);
+            }
+        })
+        .catch(error => console.error('Error fetching data:', error));
+</script>
+
+</body>
+</html>
